@@ -10,3 +10,10 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Ignore the file being built
+jenkinstail
+
+# Editor files
+.*.swp
+*~
