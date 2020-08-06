@@ -20,11 +20,22 @@ type LogData struct {
 // GetLogFromURL returns part of the log from the given start point
 // updates the LogData to have returned data and updated start point
 func GetLogFromURL(buildUrl string, logData *LogData) error {
-	path := fmt.Sprintf("%s/logText/progressiveText?start=%d",
+	path := fmt.Sprintf("%s/?start=%d",
 		buildUrl, logData.TextSize)
 	resp, err := http.Get(path)
 	if err != nil {
 		return err
+	}
+	// If the page doesn't exist, see if we can treat it as a jobname
+	// and get the text from the sub page
+	if resp.StatusCode != http.StatusOK {
+		resp.Body.Close()
+		path = fmt.Sprintf("%s/logText/progressiveText?start=%d",
+			buildUrl, logData.TextSize)
+		resp, err = http.Get(path)
+		if err != nil {
+			return err
+		}
 	}
 	defer resp.Body.Close()
 
